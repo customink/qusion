@@ -51,8 +51,10 @@ module Qusion
 
   def self.start_in_background
     if EM.reactor_running?
+      raise ArgumentError, 'AMQP already connected' if ready_to_dispatch?
       AMQP.start
     else
+      raise ArgumentError, 'Qusion already started' if @thread && @thread.alive?
       @thread = Thread.new { AMQP.start }
       thread.abort_on_exception = true
       thread.join(0.01) until ready_to_dispatch?

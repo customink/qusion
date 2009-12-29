@@ -43,7 +43,8 @@ describe Qusion, 'amqp startup' do
     ::PhusionPassenger = Module.new
     forked = mock("starting_worker_process_callback_obj")
     ::PhusionPassenger.should_receive(:on_event).with(:starting_worker_process).and_yield(forked)
-    EM.should_receive(:reactor_running?).twice.and_return(true)
+    EM.should_receive(:reactor_running?).exactly(3).times.and_return(true)
+    AMQP.conn.should_receive(:connected?).and_return(false)
     EM.should_receive(:stop)
     AMQP.should_receive(:start)
     Qusion.start_amqp_dispatcher
