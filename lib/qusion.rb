@@ -21,9 +21,7 @@ module Qusion
   def self.start_amqp_dispatcher(amqp_settings={})
     AMQP.settings.merge!(amqp_settings)
 
-    return if server_type == :none # XXX old semantics, srsly?
-
-    if server_type == :passenger
+    if server_type == :passenger || defined?(::PhusionPassenger)
       ::PhusionPassenger.on_event(:starting_worker_process) do |forked| 
         next unless forked
         EM.stop if EM.reactor_running?
@@ -77,16 +75,10 @@ module Qusion
         :passenger
       when defined?(::Mongrel::MongrelProtocol)
         :evented
-      when defined?(::Mongrel)
-        :standard
-      when defined?(::SCGI)
-        :standard
-      when defined?(::WEBrick)
-        :standard
       when defined?(::Thin)
         :evented
       else
-        :none
+        :standard
       end
     end
   end
