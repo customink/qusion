@@ -12,6 +12,7 @@ end
 
 desc "Run all of the specs"
 Spec::Rake::SpecTask.new do |t|
+  t.ruby_opts << '-rubygems'
   t.spec_opts = ['--options', "spec/spec.opts"]
   t.fail_on_error = false
 end
@@ -20,6 +21,7 @@ namespace :spec do
 
   desc "Generate HTML report for failing examples"
   Spec::Rake::SpecTask.new('report') do |t|
+    t.ruby_opts << '-rubygems'
     t.spec_files = FileList['failing_examples/**/*.rb']
     t.spec_opts = ["--format", "html:doc/tools/reports/failing_examples.html", "--diff", '--options', '"spec/spec.opts"']
     t.fail_on_error = false
@@ -27,6 +29,7 @@ namespace :spec do
 
   desc "Run all spec with RCov" 
   Spec::Rake::SpecTask.new(:rcov) do |t|
+    t.ruby_opts << '-rubygems'
     t.rcov = true
     t.rcov_dir = 'doc/tools/coverage/'
     t.rcov_opts = ['--exclude', 'spec']
