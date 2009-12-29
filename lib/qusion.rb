@@ -55,7 +55,7 @@ module Qusion
       raise ArgumentError, 'Qusion already started' if @thread && @thread.alive?
       @thread = Thread.new { AMQP.start }
       thread.abort_on_exception = true
-      thread.join(0.01) until ready_to_dispatch?
+      thread.join(0.1) until ready_to_dispatch?
     end
   end
 
