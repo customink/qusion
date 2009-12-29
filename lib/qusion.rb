@@ -6,11 +6,8 @@ require "qusion/channel_pool"
 require "qusion/amqp_config"
 
 module Qusion
-  VALID_SERVER_TYPES = [:passenger, :standard, :evented, :none]
-  
   class << self
     attr_reader :thread
-    attr_writer :server_type
   end
 
   def self.start(*opts)
@@ -21,12 +18,14 @@ module Qusion
   def self.start_amqp_dispatcher(amqp_settings={})
     AMQP.settings.merge!(amqp_settings)
 
-    if server_type == :passenger || defined?(::PhusionPassenger)
+    if defined?(::PhusionPassenger) && ::PhusionPassenger.respond_to?(:on_event)
       ::PhusionPassenger.on_event(:starting_worker_process) do |forked| 
         next unless forked
         EM.stop if EM.reactor_running?
         Thread.current[:mq] = nil
         AMQP.instance_variable_set(:@conn, nil)
+        start_in_background
+        die_gracefully_on_signal
       end
     end
 
@@ -65,22 +64,7 @@ module Qusion
         EM.stop
       end
     end
-    thread.join
-  end
-
-  def self.server_type
-    @server_type ||= begin
-      case
-      when defined?(::PhusionPassenger)
-        :passenger
-      when defined?(::Mongrel::MongrelProtocol)
-        :evented
-      when defined?(::Thin)
-        :evented
-      else
-        :standard
-      end
-    end
+    thread && thread.join
   end
 
   def self.ready_to_dispatch?

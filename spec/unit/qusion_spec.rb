@@ -32,21 +32,22 @@ describe Qusion, 'amqp startup' do
   end
   
   after(:each) do
-    Qusion.server_type = nil
     Object.send(:remove_const, :PhusionPassenger) if defined? ::PhusionPassenger
     Object.send(:remove_const, :Thin) if defined? ::Thin
     Object.send(:remove_const, :Mongrel) if defined? ::Mongrel
   end
   
   it "should kill the reactor and start a new AMQP connection when forked in Passenger" do
-    Qusion.should_receive(:die_gracefully_on_signal)
+    Qusion.should_receive(:die_gracefully_on_signal).twice
     ::PhusionPassenger = Module.new
     forked = mock("starting_worker_process_callback_obj")
     ::PhusionPassenger.should_receive(:on_event).with(:starting_worker_process).and_yield(forked)
-    EM.should_receive(:reactor_running?).exactly(3).times.and_return(true)
-    AMQP.conn.should_receive(:connected?).and_return(false)
+    EM.should_receive(:reactor_running?).exactly(5).times.and_return(true)
+    amqp_conn = mock('amqp_conn')
+    amqp_conn.should_receive(:connected?).and_return(false, false)
+    AMQP.should_receive(:conn).any_number_of_times.and_return(amqp_conn)
     EM.should_receive(:stop)
-    AMQP.should_receive(:start)
+    AMQP.should_receive(:start).twice
     Qusion.start_amqp_dispatcher
   end
   
@@ -71,75 +72,10 @@ describe Qusion, 'amqp startup' do
   
   it "should be ready to dispatch when the reactor is running and amqp is connected" do
     EM.should_receive(:reactor_running?).and_return(true)
-    AMQP.conn.should_receive(:connected?).and_return(true)
+    amqp_conn = mock('amqp_conn')
+    amqp_conn.should_receive(:connected?).and_return(true)
+    AMQP.should_receive(:conn).any_number_of_times.and_return(amqp_conn)
     Qusion.ready_to_dispatch?.should == true
-  end
-  
-end
-
-describe Qusion, 'server_type' do
-  
-  after do
-    Qusion.server_type = nil
-    Object.send(:remove_const, :SCGI) if defined? ::SCGI
-    Object.send(:remove_const, :WEBrick) if defined? ::WEBrick
-    Object.send(:remove_const, :PhusionPassenger) if defined? ::PhusionPassenger
-    Object.send(:remove_const, :Thin) if defined? ::Thin
-    Mongrel.send(:remove_const, :MongrelProtocol) if defined?(::Mongrel::MongrelProtocol)
-    Object.send(:remove_const, :Mongrel) if defined? ::Mongrel
-  end
-  
-  it "should be overridable" do
-    Qusion.server_type = :foo
-    Qusion.server_type.should == :foo
-  end
-  
-  it "maps evented mongrel to :evented" do
-    ::Mongrel = Module.new
-    ::Mongrel::MongrelProtocol = Module.new
-    Qusion.server_type.should == :evented
-  end
-  
-  it "maps Mongrel to :standard" do
-    ::Mongrel = Module.new
-    Qusion.server_type.should == :standard
-  end
-  
-  it "maps WEBrick to :standard" do
-    ::WEBrick = Module.new
-    Qusion.server_type.should == :standard
-  end
-  
-  it "maps SCGI to :standard" do
-    ::SCGI = Module.new
-    Qusion.server_type.should == :standard
-  end
-  
-  it "maps PhusionPassenger to :passenger" do
-    ::PhusionPassenger = Module.new
-    Qusion.server_type.should == :passenger
-  end
-  
-  it "maps Thin to :evented" do
-    ::Thin = Module.new
-    Qusion.server_type.should == :evented
-  end
-  
-  # Rails after 2.2(?) to edge circa Aug 2009 loads thin if it's installed no matter what
-  it "gives the server type as :standard if both Thin and Mongrel are defined" do
-    ::Mongrel = Module.new
-    ::Thin = Module.new
-    Qusion.server_type.should == :standard
-  end
-  
-  it "gives the server type as :passenger if both Thin and PhusionPassenger" do
-    ::PhusionPassenger = Module.new
-    ::Thin = Module.new
-    Qusion.server_type.should == :passenger
-  end
-  
-  it "gives the server type as :none if no supported server is found" do
-    Qusion.server_type.should == :none
   end
   
 end
