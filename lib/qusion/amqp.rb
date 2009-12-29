@@ -10,11 +10,11 @@ module AMQP
           EM.kill_reactor
           Thread.current[:mq], @conn = nil, nil
         end 
-        Thread.new { start }
+        @thread = Thread.new { start }
         die_gracefully_on_signal
       end
     when :standard
-      Thread.new { start }
+      @thread = Thread.new { start }
       die_gracefully_on_signal
     when :evented
       die_gracefully_on_signal
@@ -22,10 +22,14 @@ module AMQP
     else
       raise ArgumentError, "AMQP#start_web_dispatcher requires an argument of [:standard|:evented|:passenger|:none]"
     end
+    if @thread
+      @thread.abort_on_exception = true
+      Thread.pass until EM.reactor_running?
+    end
   end
-  
+
   def self.die_gracefully_on_signal
-    Signal.trap("INT")  { AMQP.stop { EM.stop } }
-    Signal.trap("TERM") { AMQP.stop { EM.stop } }
+    Signal.trap("INT")  { EM.schedule { AMQP.stop { EM.stop } } }
+    Signal.trap("TERM") { EM.schedule { AMQP.stop { EM.stop } } }
   end
 end
