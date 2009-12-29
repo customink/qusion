@@ -63,9 +63,9 @@ module Qusion
     EM.schedule do
       AMQP.stop do
         EM.stop
-        thread.join if thread
       end
     end
+    thread.join
   end
 
   def self.server_type
