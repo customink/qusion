@@ -20,13 +20,15 @@ module Qusion
 
     if defined?(::PhusionPassenger) && ::PhusionPassenger.respond_to?(:on_event)
       ::PhusionPassenger.on_event(:starting_worker_process) do |forked| 
-        next unless forked
-        EM.stop if EM.reactor_running?
-        Thread.current[:mq] = nil
-        AMQP.instance_variable_set(:@conn, nil)
+        if forked
+          EM.stop if EM.reactor_running?
+          Thread.current[:mq] = nil
+          AMQP.instance_variable_set(:@conn, nil)
+        end
         start_in_background
         die_gracefully_on_signal
       end
+      return
     end
 
     start_in_background
@@ -51,8 +53,11 @@ module Qusion
       raise ArgumentError, 'AMQP already connected' if ready_to_dispatch?
       AMQP.start
     else
-      raise ArgumentError, 'Qusion already started' if @thread && @thread.alive?
-      @thread = Thread.new { AMQP.start }
+      raise ArgumentError, 'Qusion already started' if thread && thread.alive?
+      @thread = Thread.new do
+        EM.run { AMQP.start }
+        raise "Premature AMQP shutdown" unless @graceful_stop
+      end
       thread.abort_on_exception = true
       thread.join(0.1) until ready_to_dispatch?
     end
@@ -60,9 +65,8 @@ module Qusion
 
   def self.graceful_stop
     EM.schedule do
-      AMQP.stop do
-        EM.stop
-      end
+      @graceful_stop = true
+      AMQP.stop { EM.stop }
     end
     thread && thread.join
   end
