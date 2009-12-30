@@ -38,16 +38,16 @@ describe Qusion, 'amqp startup' do
   end
   
   it "should kill the reactor and start a new AMQP connection when forked in Passenger" do
-    Qusion.should_receive(:die_gracefully_on_signal).twice
+    Qusion.should_receive(:die_gracefully_on_signal).once
     ::PhusionPassenger = Module.new
     forked = mock("starting_worker_process_callback_obj")
     ::PhusionPassenger.should_receive(:on_event).with(:starting_worker_process).and_yield(forked)
-    EM.should_receive(:reactor_running?).exactly(5).times.and_return(true)
+    EM.should_receive(:reactor_running?).exactly(3).times.and_return(true)
     amqp_conn = mock('amqp_conn')
-    amqp_conn.should_receive(:connected?).and_return(false, false)
+    amqp_conn.should_receive(:connected?).and_return(false)
     AMQP.should_receive(:conn).any_number_of_times.and_return(amqp_conn)
     EM.should_receive(:stop)
-    AMQP.should_receive(:start).twice
+    AMQP.should_receive(:start).once
     Qusion.start_amqp_dispatcher
   end
   
