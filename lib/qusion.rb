@@ -22,6 +22,7 @@ module Qusion
       ::PhusionPassenger.on_event(:starting_worker_process) do |forked| 
         if forked
           EM.stop if EM.reactor_running?
+          thread && thread.join
           Thread.current[:mq] = nil
           AMQP.instance_variable_set(:@conn, nil)
         end
