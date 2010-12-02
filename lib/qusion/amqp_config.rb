@@ -21,9 +21,6 @@ module Qusion
       if defined?(RAILS_ROOT)
         @config_path = RAILS_ROOT + "/config/amqp.yml"
         @framework_env = RAILS_ENV
-      elsif defined?(Merb)
-        @config_path = Merb.root + "/config/amqp.yml"
-        @framework_env = Merb.environment
       else
         nil
       end

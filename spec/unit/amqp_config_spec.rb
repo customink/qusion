@@ -5,7 +5,6 @@ describe AmqpConfig do
 
   after(:each) do
     Object.send(:remove_const, :RAILS_ROOT) if defined? ::RAILS_ROOT
-    Object.send(:remove_const, :Merb) if defined? ::Merb
   end
 
   it "should use RAILS_ROOT/config/amqp.yml if RAILS_ROOT is defined" do
@@ -14,23 +13,14 @@ describe AmqpConfig do
     AmqpConfig.new.config_path.should == "/path/to/rails/config/amqp.yml"
   end
 
-  it "should use \#{Merb.root}/config/amqp.yml if RAILS_ROOT is undefined and Merb is defined" do
-    ::Merb = mock("merby")
-    ::Merb.should_receive(:root).and_return("/path/to/merb")
-    ::Merb.should_receive(:environment).and_return(nil)
-    AmqpConfig.new.config_path.should == "/path/to/merb/config/amqp.yml"
-  end
-
   it "should use the provided path no matter what" do
     ::RAILS_ROOT = nil
-    ::Merb = nil
     path = AmqpConfig.new("/custom/path/to/amqp.yml").config_path
     path.should == "/custom/path/to/amqp.yml"
   end
 
   it "should use a provided options hash if given" do
     ::RAILS_ROOT = nil
-    ::Merb = nil
     conf = AmqpConfig.new(:host => "my-broker.mydomain.com")
     conf.config_path.should be_nil
     conf.config_opts.should == {:host => "my-broker.mydomain.com"}
