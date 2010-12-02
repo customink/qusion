@@ -18,12 +18,8 @@ module Qusion
     end
 
     def load_framework_config
-      if defined?(RAILS_ROOT)
-        @config_path = RAILS_ROOT + "/config/amqp.yml"
-        @framework_env = RAILS_ENV
-      else
-        nil
-      end
+      @config_path = Rails.root + "/config/amqp.yml"
+      @framework_env = Rails.env
     end
 
     def config_opts
