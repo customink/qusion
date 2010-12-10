@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{qusion}
-  s.version = "0.0.0"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dan DeLeo", "Christopher R. Murphy"]
@@ -17,6 +17,8 @@ Gem::Specification.new do |s|
     "README.rdoc"
   ]
   s.files = [
+    "Gemfile",
+    "Gemfile.lock",
     "LICENSE",
     "README.rdoc",
     "Rakefile",
@@ -24,6 +26,7 @@ Gem::Specification.new do |s|
     "lib/qusion.rb",
     "lib/qusion/amqp_config.rb",
     "lib/qusion/channel_pool.rb",
+    "qusion.gemspec",
     "spec/fixtures/framework-amqp.yml",
     "spec/fixtures/hardcoded-amqp.yml",
     "spec/mock_rails.rb",
