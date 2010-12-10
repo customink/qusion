@@ -30,6 +30,7 @@ begin
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
+Jeweler::RubygemsDotOrgTasks.new
 
 desc "Run Cucumber Features"
 Cucumber::Rake::Task.new do |t|
