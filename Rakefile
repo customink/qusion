@@ -22,7 +22,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "qusion"
     gem.summary = "Makes AMQP work with Ruby on Rails with no fuss."
-    gem.description = %Q{See the README for more details.}
+    gem.description = %Q{Makes AMQP work with Ruby on Rails with no fuss.}
     gem.email = "cmurphy@customink.com"
     gem.homepage = "http://github.com/customink/qusion"
     gem.authors = ["Dan DeLeo", "Christopher R. Murphy"]
