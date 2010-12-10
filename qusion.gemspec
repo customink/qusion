@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{qusion}
-  s.version = "0.1.2"
+  s.version = "0.1.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dan DeLeo", "Christopher R. Murphy"]
-  s.date = %q{2010-12-09}
+  s.date = %q{2010-12-10}
   s.description = %q{Makes AMQP work with Ruby on Rails with no fuss.}
   s.email = %q{cmurphy@customink.com}
   s.extra_rdoc_files = [
