@@ -69,35 +69,3 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
-
-# I haven't published this gem to rubygems yet.  Instead, use these rake tasks
-# to version and release to git only (for Bundler to pick up the new version).
-# Credit: http://www.cowboycoded.com/2010/07/23/working-with-private-rubygems-in-rails-3/
-namespace :version do
-  desc "Run and commit gemspec"
-  task :gemspec_and_commit => :gemspec do
-    sh "git add *.gemspec VERSION"
-    sh "git commit -m 'Updated gemspec for bundler'"
-  end
-
-  desc "Bump the patch version by 1, update gemspec, then tag and push to git."
-  task :patch_release do
-    Rake::Task['version:bump:patch'].invoke
-    Rake::Task['version:gemspec_and_commit'].invoke
-    Rake::Task['git:release'].invoke
-  end
-
-  desc "Bump the minor version by 1, update gemspec, then tag and push to git."
-  task :minor_release do
-    Rake::Task['version:bump:minor'].invoke
-    Rake::Task['version:gemspec_and_commit'].invoke
-    Rake::Task['git:release'].invoke
-  end
-
-  desc "Bump the major version by 1, update gemspec, then tag and push to git."
-  task :major_release do
-    Rake::Task['version:bump:major'].invoke
-    Rake::Task['version:gemspec_and_commit'].invoke
-    Rake::Task['git:release'].invoke
-  end
-end
