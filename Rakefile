@@ -3,8 +3,6 @@ require 'rake/rdoctask'
 require 'rubygems'
 require 'bundler'
 require "spec/rake/spectask"
-require "cucumber"
-require "cucumber/rake/task"
 
 desc 'Default: run specs.'
 task :default => :spec
@@ -31,11 +29,6 @@ rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
 Jeweler::RubygemsDotOrgTasks.new
-
-desc "Run Cucumber Features"
-Cucumber::Rake::Task.new do |t|
-  t.cucumber_opts = "-c -n"
-end
 
 desc "Run all of the specs"
 Spec::Rake::SpecTask.new do |t|
