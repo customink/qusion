@@ -18,7 +18,7 @@ module Qusion
     end
 
     def load_framework_config
-      @config_path = Rails.root + "/config/amqp.yml"
+      @config_path = "#{Rails.root}/config/amqp.yml"
       @framework_env = Rails.env
     end
 
