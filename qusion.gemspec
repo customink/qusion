@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dan DeLeo", "Christopher R. Murphy"]
-  s.date = %q{2010-12-10}
+  s.date = %q{2010-12-22}
   s.description = %q{Makes AMQP work with Ruby on Rails with no fuss.}
   s.email = %q{cmurphy@customink.com}
   s.extra_rdoc_files = [
@@ -29,9 +29,9 @@ Gem::Specification.new do |s|
     "qusion.gemspec",
     "spec/fixtures/framework-amqp.yml",
     "spec/fixtures/hardcoded-amqp.yml",
-    "spec/mock_rails.rb",
     "spec/spec.opts",
     "spec/spec_helper.rb",
+    "spec/stub_rails.rb",
     "spec/unit/amqp_config_spec.rb",
     "spec/unit/channel_pool_spec.rb",
     "spec/unit/qusion_spec.rb"
@@ -41,8 +41,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Makes AMQP work with Ruby on Rails with no fuss.}
   s.test_files = [
-    "spec/mock_rails.rb",
     "spec/spec_helper.rb",
+    "spec/stub_rails.rb",
     "spec/unit/amqp_config_spec.rb",
     "spec/unit/channel_pool_spec.rb",
     "spec/unit/qusion_spec.rb"
