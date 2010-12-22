@@ -1,6 +1,6 @@
 # encoding: UTF-8
 require File.dirname(__FILE__) + "/../../spec_helper"
-require File.dirname(__FILE__) + "/../../mock_rails"
+require File.dirname(__FILE__) + "/../../stub_rails"
 
 describe AmqpConfig do
 
