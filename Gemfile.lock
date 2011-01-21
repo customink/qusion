@@ -1,7 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    amqp (0.6.7)
+    amqp (0.7.0)
       eventmachine (>= 0.12.4)
     builder (3.0.0)
     cucumber (0.10.0)
@@ -29,7 +29,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  amqp (= 0.6.7)
+  amqp (= 0.7.0)
   bundler (~> 1.0.0)
   cucumber (>= 0.9.4)
   jeweler (~> 1.5.1)
