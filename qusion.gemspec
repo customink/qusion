@@ -55,7 +55,7 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rake>, [">= 0.8.7"])
       s.add_runtime_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_runtime_dependency(%q<amqp>, ["= 0.6.7"])
+      s.add_runtime_dependency(%q<amqp>, [">= 0.6.7"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.1"])
       s.add_development_dependency(%q<cucumber>, [">= 0.9.4"])
       s.add_development_dependency(%q<rspec>, ["~> 1.3.0"])
