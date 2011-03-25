@@ -1,6 +1,6 @@
 # encoding: UTF-8
 require "eventmachine"
-require "mq"
+require "amqp"
 
 require "qusion/channel_pool"
 require "qusion/amqp_config"

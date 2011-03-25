@@ -49,7 +49,7 @@ module Qusion
     end
     
     def pool
-      @pool ||= Array.new(pool_size) { MQ.new }
+      @pool ||= Array.new(pool_size) { AMQP::Channel.new }
     end
     
     def reset
