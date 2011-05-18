@@ -73,6 +73,6 @@ module Qusion
   end
 
   def self.ready_to_dispatch?
-    EM.reactor_running? && AMQP.conn && AMQP.conn.connected?
+    EM.reactor_running? && AMQP.connection && AMQP.connection.connected?
   end
 end
