@@ -45,7 +45,13 @@ module Qusion
     def channel
       @i ||= 1
       @i = (@i + 1) % pool_size
-      pool[@i]
+      channel = pool[@i]
+      if not channel.open?
+        pool[@i] = channel = AMQP::Channel.new
+      else
+        channel.reset
+      end
+      channel        
     end
     
     def pool
