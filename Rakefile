@@ -1,34 +1,11 @@
-require 'rake'
-require 'rake/rdoctask'
-require 'rubygems'
 require 'bundler'
+require 'rake/rdoctask'
 require "spec/rake/spectask"
 
 desc 'Default: run specs.'
 task :default => :spec
 
-begin
-  Bundler.setup(:default, :development)
-rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
-  exit e.status_code
-end
-
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "qusion"
-    gem.summary = "Makes AMQP work with Ruby on Rails with no fuss."
-    gem.description = %Q{Makes AMQP work with Ruby on Rails with no fuss.}
-    gem.email = "cmurphy@customink.com"
-    gem.homepage = "http://github.com/customink/qusion"
-    gem.authors = ["Dan DeLeo", "Christopher R. Murphy"]
-  end
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
-end
-Jeweler::RubygemsDotOrgTasks.new
+Bundler::GemHelper.install_tasks
 
 desc "Run all of the specs"
 Spec::Rake::SpecTask.new do |t|
