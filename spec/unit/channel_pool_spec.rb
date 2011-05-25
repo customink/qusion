@@ -36,13 +36,43 @@ describe ChannelPool do
   end
 
   it "should return a channel in a round-robin" do
-    @channel_pool.instance_variable_set(:@pool, [1,2,3,4,5])
+    class I
+      def initialize(i)
+        @i = i
+      end
+      def open?
+        true
+      end
+      def reset
+      end
+      def ==(x)
+        @i == x
+      end
+    end
+    p = [1,2,3,4,5].map { |i| I.new(i) }
+    @channel_pool.instance_variable_set(:@pool,p)
     @channel_pool.channel.should == 3
     @channel_pool.channel.should == 4
     @channel_pool.channel.should == 5
     @channel_pool.channel.should == 1
     @channel_pool.channel.should == 2
     @channel_pool.channel.should == 3
+  end
+  
+  it "should reopen a closed channel" do
+    ChannelPool.pool_size = 1
+    mock_channel = mock('AMQP::Channel')
+    mock_channel.should_receive(:open?).exactly(1).times.and_return(false)
+    ::AMQP::Channel.should_receive(:new).exactly(2).times.and_return(mock_channel)
+    @channel_pool.channel
+  end
+  
+  it "should reset a channel" do
+    mock_channel = mock('AMQP::Channel')
+    mock_channel.should_receive(:open?).and_return(true)
+    mock_channel.should_receive(:reset).exactly(1).times
+    ::AMQP::Channel.should_receive(:new).at_least(:once).and_return(mock_channel)
+    @channel_pool.channel
   end
 
 end
