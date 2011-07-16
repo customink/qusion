@@ -10,12 +10,12 @@ module Qusion
     attr_reader :thread
   end
 
-  def self.start(*opts)
+  def self.start(*opts, &block)
     amqp_opts = AmqpConfig.new(*opts).config_opts
-    start_amqp_dispatcher(amqp_opts)
+    start_amqp_dispatcher(amqp_opts, &block)
   end
 
-  def self.start_amqp_dispatcher(amqp_settings={})
+  def self.start_amqp_dispatcher(amqp_settings={}, &block)
     AMQP.settings.merge!(amqp_settings)
 
     if defined?(::PhusionPassenger) && ::PhusionPassenger.respond_to?(:on_event)
@@ -26,13 +26,13 @@ module Qusion
           Thread.current[:mq] = nil
           AMQP.instance_variable_set(:@conn, nil)
         end
-        start_in_background
+        start_in_background(&block)
         die_gracefully_on_signal
       end
       return
     end
 
-    start_in_background
+    start_in_background(&block)
     die_gracefully_on_signal
   end
 
@@ -49,14 +49,14 @@ module Qusion
     ChannelPool.pool_size = new_pool_size
   end
 
-  def self.start_in_background
+  def self.start_in_background(&block)
     if EM.reactor_running?
       raise ArgumentError, 'AMQP already connected' if ready_to_dispatch?
-      AMQP.start
+      AMQP.start(&block)
     else
       raise ArgumentError, 'Qusion already started' if thread && thread.alive?
       @thread = Thread.new do
-        EM.run { AMQP.start }
+        EM.run { AMQP.start(&block) }
         raise "Premature AMQP shutdown" unless @graceful_stop
       end
       thread.abort_on_exception = true
