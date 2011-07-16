@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require File.dirname(__FILE__) + "/../../spec_helper"
+require "spec_helper"
 
 describe "Qusion Convenience Methods" do
 
@@ -47,27 +47,43 @@ describe Qusion, 'amqp startup' do
     amqp_conn.should_receive(:connected?).and_return(false)
     AMQP.should_receive(:conn).any_number_of_times.and_return(amqp_conn)
     EM.should_receive(:stop)
-    AMQP.should_receive(:start).once
-    Qusion.start_amqp_dispatcher
+
+    block = proc { nil }
+    AMQP.should_receive(:start).with(&block).once
+
+    Qusion.start_amqp_dispatcher(&block)
   end
 
-  it "should set AMQP's connection settings when running under Thin" do
-    Qusion.should_receive(:die_gracefully_on_signal)
-    Qusion.should_receive(:start_in_background)
-    ::Thin = Module.new
+  it "should set AMQP's connection settings" do
+    Qusion.stub(:die_gracefully_on_signal)
+    Qusion.stub(:start_in_background)
     Qusion.start_amqp_dispatcher(:cookie => "yummy")
     AMQP.settings[:cookie].should == "yummy"
   end
 
-  it "should start a worker thread when running under Mongrel" do
-    Qusion.should_receive(:die_gracefully_on_signal)
-    mock_thread = mock('thread')
-    mock_thread.should_receive(:abort_on_exception=).with(true)
-    Qusion.should_receive(:ready_to_dispatch?).twice.and_return(false, true)
-    mock_thread.should_receive(:join)
-    Thread.should_receive(:new).and_return(mock_thread)
-    ::Mongrel = Module.new
-    Qusion.start_amqp_dispatcher
+  it "should start a worker thread when the EM reactor isn't running" do
+    EM.stub(:reactor_running? => false)
+    Qusion.stub(:die_gracefully_on_signal)
+    Qusion.stub(:ready_to_dispatch?).twice.and_return(false, true)
+
+    block = proc { nil }
+
+    AMQP.should_receive(:start).with(&block)
+
+    Qusion.start_amqp_dispatcher(&block)
+
+    Qusion.thread.should be_a(Thread)
+    Qusion.thread.abort_on_exception.should be_true
+    Qusion.thread.kill
+  end
+
+  it 'should start up AMQP when the EM reactor is running' do
+    block = proc { nil }
+    EM.stub(:reactor_running? => true)
+    Thread.should_not_receive(:new)
+    AMQP.should_receive(:start).with(&block)
+
+    Qusion.start_amqp_dispatcher(&block)
   end
 
   it "should be ready to dispatch when the reactor is running and amqp is connected" do
