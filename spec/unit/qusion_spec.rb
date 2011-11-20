@@ -43,9 +43,9 @@ describe Qusion, 'amqp startup' do
     forked = mock("starting_worker_process_callback_obj")
     ::PhusionPassenger.should_receive(:on_event).with(:starting_worker_process).and_yield(forked)
     EM.should_receive(:reactor_running?).exactly(3).times.and_return(true)
-    amqp_conn = mock('amqp_conn')
+    amqp_conn = mock('amqp_connection')
     amqp_conn.should_receive(:connected?).and_return(false)
-    AMQP.should_receive(:conn).any_number_of_times.and_return(amqp_conn)
+    AMQP.should_receive(:connection).any_number_of_times.and_return(amqp_conn)
     EM.should_receive(:stop)
 
     block = proc { nil }
@@ -88,9 +88,9 @@ describe Qusion, 'amqp startup' do
 
   it "should be ready to dispatch when the reactor is running and amqp is connected" do
     EM.should_receive(:reactor_running?).and_return(true)
-    amqp_conn = mock('amqp_conn')
+    amqp_conn = mock('amqp_connection')
     amqp_conn.should_receive(:connected?).and_return(true)
-    AMQP.should_receive(:conn).any_number_of_times.and_return(amqp_conn)
+    AMQP.should_receive(:connection).any_number_of_times.and_return(amqp_conn)
     Qusion.ready_to_dispatch?.should == true
   end
 
