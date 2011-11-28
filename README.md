@@ -22,6 +22,7 @@ fork. Improvements I've made include:
 
 * Conversion from a Rails plugin to this gem.
 * Support for Rails 3.
+* Support for Ruby AMQP 0.8.x (for 0.7.x see the amqp-0.7.x-stable branch).
 * Removed support for Merb (it complicated the code and tests; just use Rails 3).
 
 ## Before You Start
