@@ -73,7 +73,7 @@ And that's it! This will set up AMQP for any ruby app server (tested on
 mongrel, thin, and passenger). Now, you can use all of AMQP's functionality as
 normal. In your controllers or models, you might have:
 
-    MQ.new.queue("my-work-queue").publish("do work, son!")
+    AMQP::Channel.new.queue("my-work-queue").publish("do work, son!")
 
 and it should just work.
 
