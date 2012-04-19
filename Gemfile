@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 gem "rake",             ">= 0.8.7"
-gem "bundler",          "~> 1.0.0"
+gem "bundler"
 gem "amqp",             "0.7.0",   :require => 'mq'
 
 group :development do
